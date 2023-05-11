@@ -1,4 +1,4 @@
-name: Example pynt yml
+name: CI/CD pynt yml
 'on':
   workflow_dispatch:
     inputs:
