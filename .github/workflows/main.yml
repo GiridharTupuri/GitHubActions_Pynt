@@ -1,17 +1,24 @@
-name: Automated API tests using Postman CLI
-
-on: push
-
+name: Example pynt yml
+'on':
+  workflow_dispatch:
+    inputs:
+      comment:
+        type: string
+        default: API Security tests
+env:
+  PYNT_CREDENTIALS: '${{ secrets.YOURPYNTID }}'
 jobs:
-  automated-api-tests:
+  api-security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Install Postman CLI
+      - name: install pynt cli
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-      - name: Login to Postman CLI
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-      - name: Run API tests
+          python3 -m pip install --upgrade pyntcli 
+      - name: get goat collection
+        run: >
+          curl
+          https://raw.githubusercontent.com/pynt-io/pynt/main/goat_functional_tests/goat.postman_collection.json
+          -o goat.json 
+      - name: run pynt with newman integration
         run: |
-          postman collection run "21527413-a62b31d0-e1e8-4069-ad31-6a4727834f47"
+          pynt newman --collection goat.json --reporters
